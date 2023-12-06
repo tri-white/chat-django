@@ -4,6 +4,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from .forms import CustomUserCreationForm
 
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
