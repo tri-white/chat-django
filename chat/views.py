@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Message, UserStatus
 from accounts.models import CustomUser
 from django.utils import timezone
+from django.db.models import Q
 
 @login_required
 def send_message(request, user_id):
@@ -40,24 +41,18 @@ def send_message(request, user_id):
     else:
         return HttpResponseBadRequest("Invalid request method.")
     
-# chat/views.py
 @login_required
 def chat_home(request):
-    all_users = CustomUser.objects.exclude(id=request.user.id)
-    user_statuses = UserStatus.objects.filter(user__in=all_users)
-    
-    # Create a dictionary to map user IDs to UserStatus instances
-    user_status_dict = {user_status.user.id: user_status for user_status in user_statuses}
-    
-    # Create a list of users with their UserStatus instances (or None if not found)
-    users = [
-        {'user': user, 'user_status': user_status_dict.get(user.id)}
-        for user in all_users
-    ]
+    if request.method == 'GET' and 'search' in request.GET:
+        search_query = request.GET.get('search')
+        users = UserStatus.objects.filter(
+            Q(user__username__icontains=search_query)
+        ).exclude(user=request.user)
+    else:
+        users = UserStatus.objects.exclude(user=request.user)
 
     context = {'users': users}
     return render(request, 'chat/chat_home.html', context)
-
 
 @login_required
 def chat_with_user(request, user_id):

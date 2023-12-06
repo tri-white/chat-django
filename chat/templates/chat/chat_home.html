@@ -3,16 +3,15 @@
 
 {% block content %}
   <h2>Chat Home</h2>
+
+  <form method="get">
+    <input type="text" name="search" placeholder="Search contacts">
+    <button type="submit">Search</button>
+  </form>
+
   <ul>
-    {% for user_info in users %}
-      <li>
-        <a href="{% url 'chat_with_user' user_info.user.id %}">
-          {{ user_info.user.username }}
-          {% if user_info.user_status %}
-            {% if user_info.user_status.is_online %} (Online){% endif %}
-          {% endif %}
-        </a>
-      </li>
+    {% for user_status in users %}
+      <li><a href="{% url 'chat_with_user' user_status.user.id %}">{{ user_status.user.username }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}
