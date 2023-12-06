@@ -1,10 +1,10 @@
 # mychat/urls.py
 from django.contrib import admin
 from django.urls import path, include
-
+from .views import index  # Import the index view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('chat/', include('chat.urls')),
-    # Add other app URLs as needed
+    path('', index, name='index'),
 ]

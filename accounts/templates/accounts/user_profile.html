@@ -5,19 +5,26 @@
 
   <h2>User Profile</h2>
   <div>
-    {% if user.avatar %}
-      <img src="{{ user.avatar }}" alt="User Photo" style="max-width: 200px; max-height: 200px;">
-    {% else %}
+    {% if user_form.avatar %}
+    <img src="{{ user_form.avatar.url }}" alt="User Photo" style="max-width: 200px; max-height: 200px;">
+  {% else %}
       <!-- You can display a default image or a placeholder here if the user doesn't have a photo -->
       <img src="{% static 'path/to/default/photo.jpg' %}" alt="Default Photo" style="max-width: 200px; max-height: 200px;">
     {% endif %}
     <p>Nickname: {{ user.username }}</p>
     <p>Email: {{ user.email }}</p>
   </div>
-  <form method="post" enctype="multipart/form-data">
+   <!-- User Profile Form -->
+   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ user_form.as_p }}
-    {{ password_form.as_p }}
     <button type="submit">Save Changes</button>
+  </form>
+
+  <!-- Password Change Form -->
+  <form method="post">
+    {% csrf_token %}
+    {{ password_form.as_p }}
+    <button type="submit">Change Password</button>
   </form>
 {% endblock %}
