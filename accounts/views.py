@@ -54,4 +54,7 @@ def user_profile(request):
         user_form = UserProfileForm(instance=request.user)
         password_form = PasswordChangeForm(request.user)
 
+    
+
     return render(request, 'accounts/user_profile.html', {'user_form': user_form, 'password_form': password_form})
+

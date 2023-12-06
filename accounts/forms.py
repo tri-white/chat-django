@@ -21,3 +21,4 @@ class UserProfileForm(UserChangeForm):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields['password'].widget = forms.PasswordInput()
         self.fields['password'].help_text = None
+
