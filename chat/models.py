@@ -22,3 +22,11 @@ class UserStatus(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - Online: {self.is_online}'
+    
+class MessageCheck(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='message_checks')
+    other_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='checked_messages_from')
+    last_checked = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('user', 'other_user')
