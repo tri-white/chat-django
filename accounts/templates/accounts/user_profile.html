@@ -5,7 +5,8 @@
   <h2>User Profile</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ user_form.as_p }}
+    {{ password_form.as_p }}
     <button type="submit">Save Changes</button>
   </form>
 {% endblock %}

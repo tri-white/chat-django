@@ -4,6 +4,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from .forms import CustomUserCreationForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 def user_logout(request):
     logout(request)
@@ -35,11 +38,20 @@ def user_login(request):
 @login_required
 def user_profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
+        user_form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        password_form = PasswordChangeForm(request.user, request.POST)
+        
+        if user_form.is_valid() and password_form.is_valid():
+            user_form.save()
+            password_form.save()
+            update_session_auth_hash(request, password_form.user)
+            
+            messages.success(request, 'Profile updated successfully.')
             return redirect('user_profile')
+        else:
+            messages.error(request, 'Error updating profile. Please correct the errors below.')
     else:
-        form = UserProfileForm(instance=request.user)
-    
-    return render(request, 'accounts/user_profile.html', {'form': form})
+        user_form = UserProfileForm(instance=request.user)
+        password_form = PasswordChangeForm(request.user)
+
+    return render(request, 'accounts/user_profile.html', {'user_form': user_form, 'password_form': password_form})
