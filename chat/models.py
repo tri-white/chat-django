@@ -14,6 +14,7 @@ class Message(models.Model):
 class UserStatus(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     is_online = models.BooleanField(default=False)
+    last_message = models.ForeignKey('Message', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} - Online: {self.is_online}'
