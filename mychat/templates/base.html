@@ -12,6 +12,7 @@
             <ul>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li><a href="{% url 'user_profile' %}">Profile</a></li>
                     <!-- Add other authenticated user links as needed -->
                 {% else %}
                     <li><a href="{% url 'register' %}">Register</a></li>
