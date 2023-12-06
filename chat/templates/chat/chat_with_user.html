@@ -8,11 +8,12 @@
       <p>{{ message.sender.username }} ({{ message.timestamp }}): {{ message.content }}</p>
     {% endfor %}
   </div>
-  <form method="post" id="message-form">
+  <!-- chat/templates/chat/chat_with_user.html -->
+<form method="post" action="{% url 'send_message' other_user.id %}" id="message-form">
     {% csrf_token %}
     <input type="text" name="content" required>
     <button type="submit">Send</button>
-  </form>
+</form>
   <script>
     // You can add JavaScript to handle real-time updates or use Django Channels for more advanced features.
   </script>
