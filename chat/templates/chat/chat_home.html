@@ -10,15 +10,13 @@
   </form>
 
   <ul>
-    {% for user_status in users %}
+    {% for user_status in users|dictsort:"user.id" %}
       <li>
         <a href="{% url 'chat_with_user' user_status.user.id %}">
           {{ user_status.user.username }}
-          {% with last_checked=last_checked_dict.user_status.user.id %}
-            {% if user_status.last_message and not last_checked or user_status.last_message.timestamp > last_checked %}
-              <span style="color: red;">(Unread)</span>
-            {% endif %}
-          {% endwith %}
+          {% if user_status.user.id in unchecked_users_dict %}
+            <span style="color: red;">(Unread)</span>
+          {% endif %}
         </a>
       </li>
     {% endfor %}

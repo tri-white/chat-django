@@ -13,6 +13,8 @@ from .models import Message, UserStatus
 from accounts.models import CustomUser
 from django.utils import timezone
 from django.db.models import Q
+from django.db.models import Max, F
+
 
 @login_required
 def send_message(request, user_id):
@@ -53,6 +55,8 @@ def send_message(request, user_id):
     else:
         return HttpResponseBadRequest("Invalid request method.")
     
+
+
 @login_required
 def chat_home(request):
     if request.method == 'GET' and 'search' in request.GET:
@@ -63,12 +67,38 @@ def chat_home(request):
     else:
         users = UserStatus.objects.exclude(user=request.user)
 
-    # Get the last_checked timestamp for each contact
     user_checks = MessageCheck.objects.filter(user=request.user)
     last_checked_dict = {check.other_user_id: check.last_checked for check in user_checks}
 
-    context = {'users': users, 'last_checked_dict': last_checked_dict}
+    last_messages = Message.objects.filter(receiver=request.user).values('sender').annotate(last_message=Max('timestamp'))
+
+    last_message_dict = {message['sender']: message['last_message'] for message in last_messages}
+
+    unchecked_users_dict = {}
+
+    for user_status in users:
+        user_id = user_status.user.id
+        last_checked = last_checked_dict.get(user_id)
+        last_message = last_message_dict.get(user_id)
+
+        # Exclude the user if there are no messages
+        if last_message is not None:
+            # Consider the user as unread if they have never checked the messages
+            if not last_checked:
+                unchecked_users_dict[user_id] = last_message
+            # Consider the user as unread if there are new messages since their last check
+            elif last_checked and last_message > last_checked:
+                unchecked_users_dict[user_id] = last_message
+
+
+
+    context = {
+        'users': users,
+        'unchecked_users_dict': unchecked_users_dict,
+    }
     return render(request, 'chat/chat_home.html', context)
+
+
 
 @login_required
 def chat_with_user(request, user_id):
