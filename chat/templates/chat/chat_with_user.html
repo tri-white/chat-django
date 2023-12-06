@@ -2,23 +2,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Chat with {{ other_user.username }}</h2>
+  <h2>Chat with {{ other_user.username }}</h2>
 
-{% if last_activity %}
-  <p>Last active: {{ last_activity|timesince }} ago</p>
-{% endif %}
+  {% if last_activity %}
+    <p>Last active: {{ last_activity|timesince }} ago</p>
+  {% endif %}
+
   <div id="chat-messages">
     {% for message in messages %}
-      <p>{{ message.sender.username }} ({{ message.timestamp }}): {{ message.content }}</p>
+      <p>
+        {{ message.sender.username }} ({{ message.timestamp }}):
+        {% if message.sender == current_user %}
+          {% if message.content != "deleted message" %}
+            <a href="{% url 'edit_message' message.id %}">
+              <button>Edit</button>
+            </a>
+            <a href="{% url 'delete_message' message.id %}">
+              <button>Delete</button>
+            </a>
+            {{ message.content }}
+          {% else %}
+            <span style="color: gray;"><span style="font-size: 80%;">&times;</span>deleted message<span style="font-size: 80%;">&times;</span></span>
+          {% endif %}
+        {% else %}
+        {{ message.content }}
+        {% endif %}
+      </p>
     {% endfor %}
   </div>
-  <!-- chat/templates/chat/chat_with_user.html -->
-<form method="post" action="{% url 'send_message' other_user.id %}" id="message-form">
+
+  <form method="post" action="{% url 'send_message' other_user.id %}" id="message-form">
     {% csrf_token %}
     <input type="text" name="content" required>
     <button type="submit">Send</button>
-</form>
-  <script>
-    // You can add JavaScript to handle real-time updates or use Django Channels for more advanced features.
-  </script>
+  </form>
 {% endblock %}

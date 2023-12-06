@@ -15,6 +15,10 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db.models import Max, F
 
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from .models import Message
 
 @login_required
 def send_message(request, user_id):
@@ -124,5 +128,44 @@ def chat_with_user(request, user_id):
     except ObjectDoesNotExist:
         last_activity = None
 
-    context = {'other_user': other_user, 'messages': messages, 'last_activity': last_activity}
+    context = {
+        'other_user': other_user,
+        'messages': messages,
+        'last_activity': last_activity,
+        'current_user': request.user,  # Pass the current user to the template
+    }    
+    
     return render(request, 'chat/chat_with_user.html', context)
+
+@login_required
+def edit_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+
+    if message.content == "deleted message":
+        return HttpResponseForbidden("You cannot edit a deleted message.")
+
+    context = {'message': message}
+    return render(request, 'chat/edit_message.html', context)
+
+@login_required
+def delete_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+    # Update message content to "deleted message"
+    message.content = "deleted message"
+    message.save()
+    return redirect('chat_with_user', user_id=message.receiver.id)
+
+@login_required
+def update_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+
+    if message.content == "deleted message":
+        # Do not allow further updates for "deleted message"
+        return HttpResponseForbidden("You cannot edit a deleted message.")
+
+    if request.method == 'POST':
+        new_content = request.POST.get('content')
+        message.content = new_content
+        message.save()
+
+    return redirect('chat_with_user', user_id=message.receiver.id)

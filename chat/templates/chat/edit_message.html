@@ -1,0 +1,15 @@
+<!-- chat/templates/chat/edit_message.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Edit Message</h2>
+
+  <form method="post" action="{% url 'update_message' message.id %}">
+    {% csrf_token %}
+    <label for="content">Edit your message:</label>
+    <input type="text" name="content" value="{{ message.content }}" required>
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <a href="{% url 'chat_with_user' user_id=message.receiver.id %}">Back to Chat</a>
+{% endblock %}
