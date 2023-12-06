@@ -2,7 +2,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Chat with {{ other_user.username }}</h2>
+<h2>Chat with {{ other_user.username }}</h2>
+
+{% if last_activity %}
+  <p>Last active: {{ last_activity|timesince }} ago</p>
+{% endif %}
   <div id="chat-messages">
     {% for message in messages %}
       <p>{{ message.sender.username }} ({{ message.timestamp }}): {{ message.content }}</p>

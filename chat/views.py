@@ -11,6 +11,7 @@ from django.http import HttpResponseBadRequest
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Message, UserStatus
 from accounts.models import CustomUser
+from django.utils import timezone
 
 @login_required
 def send_message(request, user_id):
@@ -21,14 +22,17 @@ def send_message(request, user_id):
             recipient_user = CustomUser.objects.get(id=user_id)
 
             try:
-                receiver_status = UserStatus.objects.get(user=recipient_user)
+                sender_status = UserStatus.objects.get(user=sender)
             except ObjectDoesNotExist:
-                # If UserStatus does not exist for the recipient, create it
-                receiver_status = UserStatus.objects.create(user=recipient_user)
+                sender_status = UserStatus.objects.create(user=sender)
 
             message = Message.objects.create(sender=sender, receiver=recipient_user, content=content)
-            receiver_status.last_message = message
-            receiver_status.save()
+
+            sender_status.last_activity = timezone.now()
+
+            sender_status.last_message = message
+
+            sender_status.save()
 
             return redirect('chat_with_user', user_id=user_id)
         else:
@@ -62,5 +66,12 @@ def chat_with_user(request, user_id):
         (models.Q(sender=request.user) & models.Q(receiver=other_user)) |
         (models.Q(sender=other_user) & models.Q(receiver=request.user))
     ).order_by('timestamp')
-    context = {'other_user': other_user, 'messages': messages}
+
+    try:
+        other_user_status = UserStatus.objects.get(user=other_user)
+        last_activity = other_user_status.last_activity
+    except ObjectDoesNotExist:
+        last_activity = None
+
+    context = {'other_user': other_user, 'messages': messages, 'last_activity': last_activity}
     return render(request, 'chat/chat_with_user.html', context)
