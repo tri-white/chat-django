@@ -16,10 +16,31 @@ class CustomAuthenticationForm(AuthenticationForm):
         self.fields['username'].label = 'Псевдонім'
         self.fields['password'].label = 'Пароль'
 
+    class Meta:
+        error_messages = {
+            'invalid_login': 'Неправильний псевдонім або пароль. Будь ласка, спробуйте знову.',
+            'inactive': 'Цей обліковий запис неактивний.',
+            'all': 'Неправильний псевдонім або пароль. Будь ласка, перевірте правильність псевдоніма та паролю.',
+        }
+
+from django.contrib.auth.forms import UserCreationForm
+
 class CustomUserCreationForm(UserCreationForm):
+
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'password1', 'password2']
+        error_messages = {
+            'username': {
+                'unique': 'Це ім\'я користувача вже зайняте. Будь ласка, виберіть інше.',
+            },
+            'email': {
+                'unique': 'Користувач з цією електронною поштою вже існує.',
+            },
+            'password2': {
+                'password_mismatch': 'Введені паролі не збігаються. Будь ласка, введіть однакові паролі.',
+            },
+        }
 
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
@@ -29,6 +50,7 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['email'].label = 'Електронна пошта'
         self.fields['password1'].label = 'Пароль'
         self.fields['password2'].label = 'Підтвердження паролю'
+        # Change error messages
 
 class UserProfileForm(UserChangeForm):
     class Meta:

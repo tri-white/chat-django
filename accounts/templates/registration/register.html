@@ -1,11 +1,44 @@
-<!-- accounts/templates/registration/register.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Register</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-  </form>
+    <div class="container mt-4">
+        <div class="row justify-content-center align-items-center" style="margin-top: 10vh;">
+            <div class="col-md-5 py-3">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <h2 class="card-title text-center mb-4">Реєстрація</h2>
+                        
+                        {% if form.errors %}
+                        <div class="alert alert-danger mb-4">
+                            <strong>Помилка!</strong> Будь ласка, виправте наступні помилки:
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                    <li>{{ field }}: {{ errors.0 }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    
+                        
+                        <form method="post" class="text-center">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="mb-4">
+                                    <label for="{{ field.id_for_label }}" class="form-label h5">{{ field.label }}</label><br>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <div class="d-grid gap-2 mt-5">
+                                <button type="submit" class="btn btn-dark btn-block">Зареєструватися</button>
+                            </div>
+                        </form>
+                        <hr class="my-4">
+                        <p class="text-center">
+                            Вже маєте акаунт? <a href="{% url 'login' %}" class="text-primary">Увійдіть тут</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
