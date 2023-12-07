@@ -37,12 +37,12 @@ def user_login(request):
     else:
         form = CustomAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
-
+# views.py
 @login_required
 def user_profile(request):
     if request.method == 'POST':
         if 'user_form_submit' in request.POST:
-            user_form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+            user_form = UserProfileForm(request.POST, instance=request.user)
             if user_form.is_valid():
                 user_form.save()
                 messages.success(request, 'Profile updated successfully.')
@@ -63,4 +63,3 @@ def user_profile(request):
         password_form = PasswordChangeForm(request.user)
 
     return render(request, 'accounts/user_profile.html', {'user_form': user_form, 'password_form': password_form})
-

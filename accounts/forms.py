@@ -55,15 +55,12 @@ class CustomUserCreationForm(UserCreationForm):
 class UserProfileForm(UserChangeForm):
     class Meta:
         model = CustomUser
-        fields = ['avatar', 'password']
+        fields = ['password']
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields['password'].widget = forms.PasswordInput()
         self.fields['password'].help_text = None
-
-        # Change labels for fields to Ukrainian
-        self.fields['avatar'].label = 'Аватар'
         self.fields['password'].label = 'Пароль'
 
 
