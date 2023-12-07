@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from .forms import CustomAuthenticationForm
 
 def user_logout(request):
     logout(request)
@@ -24,15 +25,17 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form})
 
 
+
+
 def user_login(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, request.POST)
+        form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect('chat_home')  # Change 'chat_home' to the name of your chat home page
     else:
-        form = AuthenticationForm()
+        form = CustomAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
 
 @login_required

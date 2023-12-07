@@ -24,13 +24,11 @@
                         <li class="nav-item ms-5"><a class="nav-link" href="{% url 'chat_home' %}">Чат</a></li>
                         <div class="d-flex">
                             {% if user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Профіль</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Вихід</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Профіль</a></li>
-                                <!-- Add other authenticated user links as needed -->
                             {% else %}
-                                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Реєстрація</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Авторизація</a></li>
-                                <!-- Add other links for non-authenticated users as needed -->
+                                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Реєстрація</a></li>
                             {% endif %}
                         </div>
                     </ul>
