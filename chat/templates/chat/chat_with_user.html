@@ -31,49 +31,57 @@
     <form method="post" action="{% url 'send_message' other_user.id %}" id="message-form" class="mt-3 col-8 mx-auto px-auto">
       {% csrf_token %}
       <div class="input-group">
-        <input type="text" name="content" class="form-control" required>
+        <input type="text" name="content" class="form-control" id="message-input" required>
+        <button type="button" id="emoji-button" class="btn btn-light">😊</button>
         <button type="submit" class="btn btn-dark">Надіслати</button>
       </div>
     </form>
+    
   </div>
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      $('.message-container').on('contextmenu', function(e) {
-        var messageId = $(this).data('message-id');
-        var isCurrentUserMessage = $(this).hasClass('current-user-message');
-        var isDeletedMessage = $(this).find('.message-content').text().trim() === 'deleted message';
-  
-        // Remove any existing context menus
-        $('.context-menu').remove();
-  
-        if (isCurrentUserMessage && !isDeletedMessage) {
-          var menu = $('<div/>').addClass('context-menu').appendTo('body');
-  
-          var editButton = $('<button/>').text('Редагувати').click(function() {
-            window.location.href = '{% url "edit_message" 0 %}'.replace('0', messageId);
-          });
-          var deleteButton = $('<button/>').text('Видалити').click(function() {
-            window.location.href = '{% url "delete_message" 0 %}'.replace('0', messageId);
-          });
-  
-          menu.append(editButton, deleteButton);
-  
-          menu.css({
-            top: e.pageY - 10 + 'px',
-            left: e.pageX - 10 + 'px',
-            position: 'absolute'
-          });
-  
-          e.preventDefault();
-        }
-      });
-  
-      $(document).on('click', function() {
-        $('.context-menu').remove();
-      });
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const inputField = document.getElementById('message-input');
+    const emojiButton = document.getElementById('emoji-button');
+    const emojiPicker = new EmojiPicker();
+
+    emojiButton.addEventListener('click', function () {
+      emojiPicker.showPicker(inputField);
     });
-  </script>
-  
+  });
+  $(document).ready(function() {
+    $('.message-container').on('contextmenu', function(e) {
+      e.preventDefault(); // Prevent the default context menu
+      
+      var messageId = $(this).data('message-id');
+      var isCurrentUserMessage = $(this).hasClass('current-user-message');
+      var isDeletedMessage = $(this).find('.message-content').text().trim() === 'deleted message';
+
+      // Remove any existing context menus
+      $('.context-menu').remove();
+
+      if (isCurrentUserMessage && !isDeletedMessage) {
+        var menu = $('<div/>').addClass('context-menu').appendTo('body');
+
+        var editButton = $('<button/>').text('Редагувати').click(function() {
+          window.location.href = '{% url "edit_message" 0 %}'.replace('0', messageId);
+        });
+        var deleteButton = $('<button/>').text('Видалити').click(function() {
+          window.location.href = '{% url "delete_message" 0 %}'.replace('0', messageId);
+        });
+
+        menu.append(editButton, deleteButton);
+
+        menu.css({
+          top: e.pageY - 10 + 'px',
+          left: e.pageX - 10 + 'px',
+          position: 'absolute'
+        });
+      }
+    });
+
+  });
+</script>
+
   
 {% endblock %}

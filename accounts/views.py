@@ -40,16 +40,8 @@ def user_login(request):
 
 @login_required
 def user_profile(request):
-    if request.method == 'POST':
-        if 'user_form_submit' in request.POST:
-            user_form = UserProfileForm(request.POST, instance=request.user)
-            if user_form.is_valid():
-                user_form.save()
-                messages.success(request, 'Profile updated successfully.')
-                return redirect('user_profile')
-            else:
-                messages.error(request, 'Error updating profile. Please correct the errors below.')
-        elif 'password_form_submit' in request.POST:
+    password_form = None
+    if 'password_form_submit' in request.POST:
             password_form = PasswordChangeForm(request.user, request.POST)
             if password_form.is_valid():
                 password_form.save()
@@ -59,7 +51,6 @@ def user_profile(request):
             else:
                 messages.error(request, 'Error changing password. Please correct the errors below.')
     else:
-        user_form = UserProfileForm(instance=request.user)
         password_form = PasswordChangeForm(request.user)
 
-    return render(request, 'accounts/user_profile.html', {'user_form': user_form, 'password_form': password_form})
+    return render(request, 'accounts/user_profile.html', {'password_form': password_form})
