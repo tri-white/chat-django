@@ -1,6 +1,8 @@
-<!-- home/templates/home/index.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>WELCOME</h2>
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 70vh;">
+        <h1 class="text-center mb-4">Вітаємо у месенджері TeaChat!</h1>
+        <a href="{% url 'chat_home' %}" class="btn btn-dark">Перейти до спілкування!</a>
+    </div>
 {% endblock %}

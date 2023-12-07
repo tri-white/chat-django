@@ -1,29 +1,48 @@
-<!-- mychat/templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MyChatApp{% endblock %}</title>
+    <title>{% block title %}TeaChat{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div>
-        <nav>
-            <ul>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                    <li><a href="{% url 'user_profile' %}">Profile</a></li>
-                    <!-- Add other authenticated user links as needed -->
-                {% else %}
-                    <li><a href="{% url 'register' %}">Register</a></li>
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                    <!-- Add other links for non-authenticated users as needed -->
-                {% endif %}
-                <li><a href="{% url 'chat_home' %}">Chat</a></li>
-            </ul>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand fs-4" href="{% url 'index' %}">TeaChat</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav d-flex justify-content-between w-100 fs-5">
+                        <li class="nav-item ms-5"><a class="nav-link" href="{% url 'chat_home' %}">Чат</a></li>
+                        <div class="d-flex">
+                            {% if user.is_authenticated %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Вихід</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'user_profile' %}">Профіль</a></li>
+                                <!-- Add other authenticated user links as needed -->
+                            {% else %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Реєстрація</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Авторизація</a></li>
+                                <!-- Add other links for non-authenticated users as needed -->
+                            {% endif %}
+                        </div>
+                    </ul>
+                    
+                    
+            </div>
         </nav>
-        {% block content %}
-        {% endblock %}
+
+        <div class="container mt-4">
+            {% block content %}
+            {% endblock %}
+        </div>
     </div>
 </body>
 </html>
