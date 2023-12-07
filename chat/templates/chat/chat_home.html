@@ -1,24 +1,42 @@
-<!-- chat/templates/chat/chat_home.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Chat Home</h2>
+  <div class="container mt-4">
+    <h2 class="mb-4">Всі користувачі</h2>
 
-  <form method="get">
-    <input type="text" name="search" placeholder="Search contacts">
-    <button type="submit">Search</button>
-  </form>
+    <form class="mb-4" method="get">
+      <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Пошук контактів">
+        <button type="submit" class="btn btn-primary">Пошук</button>
+      </div>
+    </form>
 
-  <ul>
-    {% for user_status in users|dictsort:"user.id" %}
-      <li>
-        <a href="{% url 'chat_with_user' user_status.user.id %}">
-          {{ user_status.user.username }}
-          {% if user_status.user.id in unchecked_users_dict %}
-            <span style="color: red;">(Unread)</span>
-          {% endif %}
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
+    <div class="row">
+      {% for user_status in users|dictsort:"user.id" %}
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{% url 'chat_with_user' user_status.user.id %}" class="link-dark text-decoration-none">
+                  {% if user_status.user.id in unchecked_users_dict %}
+                    <span class="badge bg-primary"></span>
+                  {% endif %}
+                  {{ user_status.user.username }}
+                </a>
+                {% if user_status.user.id in unchecked_users_dict %}
+                <span class="badge bg-primary"> </span>
+              {% endif %}
+              </h5>
+            
+              {% for message in last_messages %}
+                {% if message.sender == user_status.user.id %}
+                  <p class="text-muted">{{ message.last_message.text }}</p>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}

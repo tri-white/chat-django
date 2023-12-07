@@ -99,6 +99,7 @@ def chat_home(request):
     context = {
         'users': users,
         'unchecked_users_dict': unchecked_users_dict,
+        'last_messages': last_messages,  # Add this line to pass last_messages to the template
     }
     return render(request, 'chat/chat_home.html', context)
 

@@ -1,15 +1,18 @@
-<!-- chat/templates/chat/edit_message.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Edit Message</h2>
+  <div class="container mt-4">
+    <h2 class="text-center">Редагування повідомлення</h2>
 
-  <form method="post" action="{% url 'update_message' message.id %}">
-    {% csrf_token %}
-    <label for="content">Edit your message:</label>
-    <input type="text" name="content" value="{{ message.content }}" required>
-    <button type="submit">Save Changes</button>
-  </form>
+    <form method="post" action="{% url 'update_message' message.id %}" class="mx-auto col-md-6">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="content" class="form-label">Редагуйте ваше повідомлення:</label>
+        <input type="text" name="content" class="form-control" value="{{ message.content }}" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+    </form>
 
-  <a href="{% url 'chat_with_user' user_id=message.receiver.id %}">Back to Chat</a>
+    <a href="{% url 'chat_with_user' user_id=message.receiver.id %}" class="d-block text-center mt-3">Повернутися до чату</a>
+  </div>
 {% endblock %}
