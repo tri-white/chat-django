@@ -14,8 +14,8 @@
     <div class="row">
       {% for user_status in users|dictsort:"user.id" %}
         <div class="col-md-4 mb-3">
-          <div class="card">
-            <div class="card-body">
+          <div class="card h-100">
+            <div class="card-body d-flex flex-column">
               <h5 class="card-title">
                 <a href="{% url 'chat_with_user' user_status.user.id %}" class="link-dark text-decoration-none">
                   {% if user_status.user.id in unchecked_users_dict %}
@@ -24,13 +24,13 @@
                   {{ user_status.user.username }}
                 </a>
                 {% if user_status.user.id in unchecked_users_dict %}
-                <span class="badge bg-primary"> </span>
-              {% endif %}
+                  <span class="badge bg-primary"> </span>
+                {% endif %}
               </h5>
-            
+
               {% for message in last_messages %}
                 {% if message.sender == user_status.user.id %}
-                  <p class="text-muted">{{ message.last_message.text }}</p>
+                  <p class="text-muted mb-auto">{{ message.last_message.content }}</p>
                 {% endif %}
               {% endfor %}
             </div>

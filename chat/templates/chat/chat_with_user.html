@@ -2,35 +2,30 @@
 
 {% block content %}
   <div class="container mt-4">
-    <h2 class="text-center">Чат з {{ other_user.username }}</h2>
+    <div style="background-color:lightgray;" class="col-8 text-center mx-auto">
+      <h2 class="text-center">Чат з {{ other_user.username }}</h2>
 
-    {% if last_activity %}
-      <p class="text-center">Остання активність: {{ last_activity|timesince }} тому</p>
-    {% endif %}
+      {% if last_activity %}
+        <p class="text-center">Остання активність: {{ last_activity|timesince }} тому</p>
+      {% endif %}
+    </div>
 
     <div id="chat-messages" class="col-8 mx-auto px-auto" style="max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column-reverse;">
       {% for message in messages %}
-        <div class="mb-3 col-5 {% if message.sender == current_user %}text-end{% endif %}" style="{% if message.sender == current_user %}align-self: flex-end;{% else %}align-self: flex-start;{% endif %}">
-          <div class="card col-12 mx-auto" style="background-color: {% if message.sender == current_user %}yellow{% else %}lightgreen{% endif %};">
-            <div class="card-body">
-              {% if message.sender == current_user %}
-                {% if message.content != "deleted message" %}
-                  <a href="{% url 'edit_message' message.id %}" class="btn btn-sm btn-outline-primary me-1">Редагувати</a>
-                  <a href="{% url 'delete_message' message.id %}" class="btn btn-sm btn-outline-danger">Видалити</a>
-                  <p class="card-text">{{ message.content }}</p>
-                {% else %}
-                  <p class="card-text" style="color: gray;">
-                    <span style="font-size: 80%;">&times;</span>видалене повідомлення<span style="font-size: 80%;">&times;</span>
-                  </p>
-                {% endif %}
-              {% else %}
-                <p class="card-text">{{ message.content }}</p>
-              {% endif %}
-            </div>
+      <div class="mb-3 col-5 {% if message.sender == current_user %}text-end current-user-message{% endif %} message-container" data-message-id="{{ message.id }}" style="{% if message.sender == current_user %}align-self: flex-end;{% else %}align-self: flex-start;{% endif %}">
+        <div class="card col-12 mx-auto" style="background-color: {% if message.sender == current_user %}yellow{% else %}lightgreen{% endif %};">
+          <div class="card-body">
+            <p class="card-text message-content">
+              {{ message.content }}
+            </p>
           </div>
         </div>
-      {% endfor %}
+        <p class="card-text small text-muted">
+          {{ message.sender.username }} - {{ message.timestamp|timesince }} тому
+        </p>
+      </div>
       
+      {% endfor %}
     </div>
 
     <form method="post" action="{% url 'send_message' other_user.id %}" id="message-form" class="mt-3 col-8 mx-auto px-auto">
@@ -41,10 +36,44 @@
       </div>
     </form>
   </div>
-
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script>
-    // Scroll to the bottom of the chat messages box
-    var chatMessages = document.getElementById('chat-messages');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    $(document).ready(function() {
+      $('.message-container').on('contextmenu', function(e) {
+        var messageId = $(this).data('message-id');
+        var isCurrentUserMessage = $(this).hasClass('current-user-message');
+        var isDeletedMessage = $(this).find('.message-content').text().trim() === 'deleted message';
+  
+        // Remove any existing context menus
+        $('.context-menu').remove();
+  
+        if (isCurrentUserMessage && !isDeletedMessage) {
+          var menu = $('<div/>').addClass('context-menu').appendTo('body');
+  
+          var editButton = $('<button/>').text('Редагувати').click(function() {
+            window.location.href = '{% url "edit_message" 0 %}'.replace('0', messageId);
+          });
+          var deleteButton = $('<button/>').text('Видалити').click(function() {
+            window.location.href = '{% url "delete_message" 0 %}'.replace('0', messageId);
+          });
+  
+          menu.append(editButton, deleteButton);
+  
+          menu.css({
+            top: e.pageY - 10 + 'px',
+            left: e.pageX - 10 + 'px',
+            position: 'absolute'
+          });
+  
+          e.preventDefault();
+        }
+      });
+  
+      $(document).on('click', function() {
+        $('.context-menu').remove();
+      });
+    });
   </script>
+  
+  
 {% endblock %}

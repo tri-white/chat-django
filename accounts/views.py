@@ -19,7 +19,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('chat_home')  # Change 'chat_home' to the name of your chat home page
+            return redirect('chat_home')
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -33,11 +33,11 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('chat_home')  # Change 'chat_home' to the name of your chat home page
+            return redirect('chat_home')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
-# views.py
+
 @login_required
 def user_profile(request):
     if request.method == 'POST':

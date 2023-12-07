@@ -12,7 +12,6 @@ class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(CustomAuthenticationForm, self).__init__(*args, **kwargs)
 
-        # Change labels for fields to Ukrainian
         self.fields['username'].label = 'Псевдонім'
         self.fields['password'].label = 'Пароль'
 
@@ -45,12 +44,10 @@ class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
 
-        # Change labels for fields to Ukrainian
         self.fields['username'].label = 'Ім\'я користувача'
         self.fields['email'].label = 'Електронна пошта'
         self.fields['password1'].label = 'Пароль'
         self.fields['password2'].label = 'Підтвердження паролю'
-        # Change error messages
 
 class UserProfileForm(UserChangeForm):
     class Meta:

@@ -43,7 +43,6 @@ def send_message(request, user_id):
             # Update last_activity for both sender and receiver
             sender_status.last_activity = timezone.now()
 
-            # Update the last_checked timestamp for the sender
             sender_check, created = MessageCheck.objects.get_or_create(user=sender, other_user=recipient_user)
             sender_check.last_checked = timezone.now()
             sender_check.save()
@@ -85,12 +84,9 @@ def chat_home(request):
         last_checked = last_checked_dict.get(user_id)
         last_message = last_message_dict.get(user_id)
 
-        # Exclude the user if there are no messages
         if last_message is not None:
-            # Consider the user as unread if they have never checked the messages
             if not last_checked:
                 unchecked_users_dict[user_id] = last_message
-            # Consider the user as unread if there are new messages since their last check
             elif last_checked and last_message > last_checked:
                 unchecked_users_dict[user_id] = last_message
 
@@ -99,7 +95,6 @@ def chat_home(request):
     context = {
         'users': users,
         'unchecked_users_dict': unchecked_users_dict,
-        'last_messages': last_messages,  # Add this line to pass last_messages to the template
     }
     return render(request, 'chat/chat_home.html', context)
 
@@ -111,13 +106,12 @@ def chat_with_user(request, user_id):
     messages = Message.objects.filter(
         (models.Q(sender=request.user) & models.Q(receiver=other_user)) |
         (models.Q(sender=other_user) & models.Q(receiver=request.user))
-    ).order_by('timestamp')
+    ).order_by('-timestamp') 
 
     try:
         other_user_status = UserStatus.objects.get(user=other_user)
         last_activity = other_user_status.last_activity
 
-        # Update the last_checked timestamp when the user enters the chat
         try:
             sender_check = MessageCheck.objects.get(user=request.user, other_user=other_user)
         except MessageCheck.DoesNotExist:
@@ -133,7 +127,7 @@ def chat_with_user(request, user_id):
         'other_user': other_user,
         'messages': messages,
         'last_activity': last_activity,
-        'current_user': request.user,  # Pass the current user to the template
+        'current_user': request.user,
     }    
     
     return render(request, 'chat/chat_with_user.html', context)
@@ -151,7 +145,6 @@ def edit_message(request, message_id):
 @login_required
 def delete_message(request, message_id):
     message = get_object_or_404(Message, id=message_id, sender=request.user)
-    # Update message content to "deleted message"
     message.content = "deleted message"
     message.save()
     return redirect('chat_with_user', user_id=message.receiver.id)
@@ -161,7 +154,6 @@ def update_message(request, message_id):
     message = get_object_or_404(Message, id=message_id, sender=request.user)
 
     if message.content == "deleted message":
-        # Do not allow further updates for "deleted message"
         return HttpResponseForbidden("You cannot edit a deleted message.")
 
     if request.method == 'POST':
