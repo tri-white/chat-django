@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% load static %}  <!-- Додайте цей рядок для завантаження тегу static -->
+  {% load static %}
 
   <div class="container mt-5 text-center">
     <h2 class="mb-4 display-4">Профіль користувача</h2>
@@ -9,6 +9,7 @@
       <p class="mt-3 lead">Псевдонім: {{ user.username }}</p>
       <p class="lead">Email: {{ user.email }}</p>
     </div>
+
 
     <!--<div class="accordion" id="profileSettingsAccordion">
       <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="collapse" data-bs-target="#userProfileForm" aria-expanded="true" aria-controls="userProfileForm">

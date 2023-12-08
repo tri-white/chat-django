@@ -40,7 +40,6 @@ def send_message(request, user_id):
 
             message = Message.objects.create(sender=sender, receiver=recipient_user, content=content)
 
-            # Update last_activity for both sender and receiver
             sender_status.last_activity = timezone.now()
 
             sender_check, created = MessageCheck.objects.get_or_create(user=sender, other_user=recipient_user)

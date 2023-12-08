@@ -51,13 +51,12 @@
   });
   $(document).ready(function() {
     $('.message-container').on('contextmenu', function(e) {
-      e.preventDefault(); // Prevent the default context menu
+      e.preventDefault();
       
       var messageId = $(this).data('message-id');
       var isCurrentUserMessage = $(this).hasClass('current-user-message');
       var isDeletedMessage = $(this).find('.message-content').text().trim() === 'deleted message';
 
-      // Remove any existing context menus
       $('.context-menu').remove();
 
       if (isCurrentUserMessage && !isDeletedMessage) {
